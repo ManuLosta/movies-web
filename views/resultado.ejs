@@ -5,17 +5,23 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-<h1>Resultado de la Búsqueda</h1>
-<% if (movies.length === 0) { %>
-    <p>No hay resultados.</p>
-<% } else { %>
-    <ul>
-        <% movies.forEach((movie) => { %>
-            <li><a href="/pelicula/<%= movie.movie_id %>"><%= movie.title %></a></li>
-        <% }); %>
-    </ul>
-<% } %>
-<p></p>
-<div id="inicio"><a href="/">Inicio</a></div>
+    <div class="results-container">
+        <h1>Resultado de la Búsqueda</h1>
+        <% if (movies.length === 0) { %>
+            <p>No hay resultados.</p>
+        <% } else { %>
+            <ul>
+                <% movies.forEach((movie) => { %>
+                    <li class="movie-card">
+                        <a href="/pelicula/<%= movie.movie_id %>">
+                            <p class="movie-card-title"><%= movie.title %></p>
+                            <p class="moovie-card-year"><%= movie.release_date.substring(0, 4) %></p>
+                        </a>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } %>
+    <div id="inicio"><a href="/">Inicio</a></div>
+    </div>
 </body>
 </html>

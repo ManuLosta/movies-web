@@ -51,3 +51,41 @@ body {
 .search-button:hover {
     background-color: #0056b3;
 }
+
+.results-container {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}  
+
+.movie-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    list-style: none;
+  }
+  
+  .movie-card a {
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .movie-card-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin: 5px 0;
+  }
+  
+  .movie-card-year {
+    font-size: 1rem;
+    color: #777;
+    margin: 5px 0;
+  }
