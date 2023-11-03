@@ -1,49 +1,68 @@
 const db = require('../db');
 
 const getSearch = (req, res) => {
+    const searchType = req.query.type;
     const searchTerm = req.query.q;
 
-    // Realizar la búsqueda en la base de datos
-    db.all(
-        'SELECT * FROM movie WHERE title LIKE ?',
-        [`%${searchTerm}%`],
-        (err, movies) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Error en la búsqueda.');
-            } else {
-                db.all(
-                    `SELECT DISTINCT p.person_name, p.person_id
-                    FROM movie_cast AS mc
-                    JOIN person AS p ON mc.person_id = p.person_id
-                    WHERE p.person_name LIKE ?`,
-                    [`%${searchTerm}%`],
-                    (err, actors) => {
-                        if (err) {
-                            console.log(err);
-                            res.status(500).send('Error en la búsqueda.');
-                        } else {
-                            db.all(
-                                `SELECT DISTINCT p.person_name, p.person_id
-                                FROM movie_crew AS mc
-                                JOIN person AS p ON p.person_id = mc.person_id
-                                WHERE mc.job = 'Director' AND p.person_name LIKE ?`,
-                                [`%${searchTerm}%`],
-                                (err, directors) => {
-                                    if (err) {
-                                        console.log(err);
-                                        res.status(500).send('Error en la búsqueda.');
-                                    } else {
-                                        res.render('resultado', { movies, actors, directors })
+    if (searchType == "all") {
+        db.all(
+            'SELECT * FROM movie WHERE title LIKE ?',
+            [`%${searchTerm}%`],
+            (err, movies) => {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send('Error en la búsqueda.');
+                } else {
+                    db.all(
+                        `SELECT DISTINCT p.person_name, p.person_id
+                        FROM movie_cast AS mc
+                        JOIN person AS p ON mc.person_id = p.person_id
+                        WHERE p.person_name LIKE ?`,
+                        [`%${searchTerm}%`],
+                        (err, actors) => {
+                            if (err) {
+                                console.log(err);
+                                res.status(500).send('Error en la búsqueda.');
+                            } else {
+                                db.all(
+                                    `SELECT DISTINCT p.person_name, p.person_id
+                                    FROM movie_crew AS mc
+                                    JOIN person AS p ON p.person_id = mc.person_id
+                                    WHERE mc.job = 'Director' AND p.person_name LIKE ?`,
+                                    [`%${searchTerm}%`],
+                                    (err, directors) => {
+                                        if (err) {
+                                            console.log(err);
+                                            res.status(500).send('Error en la búsqueda.');
+                                        } else {
+                                            res.render('resultado', { movies, actors, directors });
+                                        }
                                     }
-                                }
-                            );
+                                );
+                            }
                         }
-                    }
-                );
+                    );
+                }
             }
-        }
-    );
+        );
+    } else if (searchType == "keywords") {
+        db.all(
+            `SELECT m.title, m.movie_id, m.release_date
+            FROM movie as m JOIN movie_keywords as mk ON m.movie_id = mk.movie_id
+            JOIN keyword as k ON k.keyword_id = mk.keyword_id
+            WHERE k.keyword_name = ?`,
+            [`${searchTerm}`],
+            (err, movies) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send('Error en la búsqueda.');
+                } else {
+                    res.render('resultado', { movies, actors: [], directors: [] });
+                }
+            }
+        )
+    }
+    
 }
 
 

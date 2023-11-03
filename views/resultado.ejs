@@ -9,6 +9,7 @@
     <div class="container-fluid">
         <h1 class="m-4 text-center">Resultado de la búsqueda</h1>
         <div class="row text-center">
+
         <div class="col mx-2">
         <h2>Películas</h2>
             <% if (movies.length === 0) { %>
@@ -23,25 +24,23 @@
                 </ul>
             <% } %>
         </div>
+
+        <% if (actors.length != 0) { %>
         <div class="col mx-2">
             <h2>Actores</h2>
-            <% if (actors.length === 0) { %>
-                <p>No hay resultados.</p>
-            <% } else { %>
-                <ul class="list-unstyled d-flex flex-column align-items-center">
-                    <% actors.forEach((actor) => { %>
-                        <li class="my-1 p-1 px-3 card text-primary-emphasis border border-primary-subtle bg-primary-subtle rounded-3">
-                            <a class="text-center text-decoration-none" href="/persona/<%= actor.person_id %>"><%= actor.person_name %></a>
-                        </li>
-                    <% }); %>
-                </ul>
-            <% } %>
+            <ul class="list-unstyled d-flex flex-column align-items-center">
+                <% actors.forEach((actor) => { %>
+                    <li class="my-1 p-1 px-3 card text-primary-emphasis border border-primary-subtle bg-primary-subtle rounded-3">
+                        <a class="text-center text-decoration-none" href="/persona/<%= actor.person_id %>"><%= actor.person_name %></a>
+                    </li>
+                <% }); %>
+            </ul>
         </div>
+        <% } %>
+
+        <% if (directors.length != 0) { %>
         <div class="col mx-2">
             <h2>Directores</h2>
-            <% if (directors.length === 0) { %>
-                <p>No hay resultados.</p>
-            <% } else { %>
                 <ul class="list-unstyled d-flex flex-column align-items-center">
                     <% directors.forEach((director) => { %>
                         <li class="my-1 p-1 px-3 card text-primary-emphasis border border-primary-subtle bg-primary-subtle rounded-3">
@@ -49,8 +48,9 @@
                         </li>
                     <% }); %>
                 </ul>
-            <% } %>
         </div>
+        <% } %>
+        
         </div>
     </div>
 </body>
