@@ -2,9 +2,10 @@
 <html>
 <head>
     <title><%= movie.title %></title>
-    <link rel="stylesheet" href="/styles.css">
+    <%- include('partials/header') %>
 </head>
 <body>
+<%- include('partials/navbar') %>
 <h1><%= movie.title %></h1>
 <h3>Fecha: <%= movie.release_date %></h3>
 <h3>Dirigida por: </h3>

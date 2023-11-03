@@ -1,0 +1,15 @@
+<nav class="navbar fixed-top bg-body-tertiary">
+    <div class="container-fluid">
+        <a href="/" class="navbar-brand">🎥 Movie Database</a>
+        <form action="/buscar" method="GET" autocomplete="off" class="input-group w-auto center">
+            <div class="input-group-prepend">
+                <select class="form-select">
+                    <option value="all">Todo</option>
+                    <option value="keywords">Keywords</option>
+                </select>
+            </div>
+            <input type="text" name="q" placeholder="Buscar" class="form-control" />
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+    </div>
+</nav>

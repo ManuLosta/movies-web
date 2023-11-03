@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Movies Web</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Movie Database</title>
+    <%- include('partials/header') %>
 </head>
 <body>
-    <div class="search-container">
-        <h1 class="header-title">Movies Web</h1>
-        <form action="/buscar" method="GET" class="search-form">
-            <input type="text" name="q" placeholder="Buscar películas..." class="search-input" />
-            <button type="submit" class="search-button">Buscar</button>
+    <div class="container d-flex flex-column justify-content-center align-items-center vh-100">
+        <h1 class="mb-3">🎥 Movie Database</h1>
+        <form action="/buscar" method="GET" autocomplete="off" class="input-group w-50">
+            <div class="input-group-prepend">
+                <select class="form-select">
+                    <option value="all">Todo</option>
+                    <option value="keywords">Keywords</option>
+                </select>
+            </div>
+            <input type="text" name="q" placeholder="Buscar" class="form-control" />
+            <button type="submit" class="btn btn-primary">Buscar</button>
         </form>
     </div>
 </body>

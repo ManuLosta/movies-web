@@ -7,12 +7,40 @@ const getSearch = (req, res) => {
     db.all(
         'SELECT * FROM movie WHERE title LIKE ?',
         [`%${searchTerm}%`],
-        (err, rows) => {
+        (err, movies) => {
             if (err) {
                 console.error(err);
                 res.status(500).send('Error en la búsqueda.');
             } else {
-                res.render('resultado', { movies: rows });
+                db.all(
+                    `SELECT DISTINCT p.person_name, p.person_id
+                    FROM movie_cast AS mc
+                    JOIN person AS p ON mc.person_id = p.person_id
+                    WHERE p.person_name LIKE ?`,
+                    [`%${searchTerm}%`],
+                    (err, actors) => {
+                        if (err) {
+                            console.log(err);
+                            res.status(500).send('Error en la búsqueda.');
+                        } else {
+                            db.all(
+                                `SELECT DISTINCT p.person_name, p.person_id
+                                FROM movie_crew AS mc
+                                JOIN person AS p ON p.person_id = mc.person_id
+                                WHERE mc.job = 'Director' AND p.person_name LIKE ?`,
+                                [`%${searchTerm}%`],
+                                (err, directors) => {
+                                    if (err) {
+                                        console.log(err);
+                                        res.status(500).send('Error en la búsqueda.');
+                                    } else {
+                                        res.render('resultado', { movies, actors, directors })
+                                    }
+                                }
+                            );
+                        }
+                    }
+                );
             }
         }
     );
@@ -158,69 +186,43 @@ const getMovie = (req, res) => {
 }
 
 
-const getActor = (req, res) => {
-    const actorId = req.params.id;
+const getPerson = (req, res) => {
+    const personId = req.params.id;
 
-    // Consulta SQL para obtener las películas en las que participó el actor
-    const query = `
-    SELECT DISTINCT
-      person.person_name as actorName,
-      movie.*
-    FROM movie
-    INNER JOIN movie_cast ON movie.movie_id = movie_cast.movie_id
-    INNER JOIN person ON person.person_id = movie_cast.person_id
-    WHERE movie_cast.person_id = ?;
-  `;
-
-    // Ejecutar la consulta
-    db.all(query, [actorId], (err, movies) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error al cargar las películas del actor.');
-        } else {
-            // Obtener el nombre del actor
-            const actorName = movies.length > 0 ? movies[0].actorName : '';
-
-            res.render('actor', { actorName, movies });
+    db.all(
+        `SELECT m.title, m.movie_id, p.person_name, m.release_date
+        FROM person as p JOIN movie_crew as mcr ON p.person_id = mcr.person_id
+        JOIN movie as m ON m.movie_id = mcr.movie_id
+        WHERE mcr.job = 'Director' AND p.person_id = ?`,
+        [personId],
+        (err, moviesDirector) => {
+            if (err) {
+                console.log('Peliculas no encontradas');
+                res.status(500).send('Error al cargar los datos de la persona.');
+            } else {
+                db.all(
+                    `SELECT m.title, m.movie_id, mc.character_name, m.release_date, p.person_name
+                    FROM person as p JOIN movie_cast as mc ON p.person_id = mc.person_id
+                    JOIN movie as m ON m.movie_id = mc.movie_id
+                    WHERE p.person_id = ?`,
+                    [personId],
+                    (err, moviesActor) => {
+                        if (err) {
+                            console.log('Peliculas no encontradas');
+                            res.status(500).send('Error al cargar los datos de la persona.');
+                        } else {
+                            const name = (moviesDirector.length != 0) ? moviesDirector[0].person_name : moviesActor[0].person_name;
+                            res.render('person', { moviesDirector, moviesActor, name });
+                        }
+                    }
+                );
+            }
         }
-    });
-}
-
-
-const getDirector = (req, res) => {
-    const directorId = req.params.id;
-
-    // Consulta SQL para obtener las películas dirigidas por el director
-    const query = `
-    SELECT DISTINCT
-      person.person_name as directorName,
-      movie.*
-    FROM movie
-    INNER JOIN movie_crew ON movie.movie_id = movie_crew.movie_id
-    INNER JOIN person ON person.person_id = movie_crew.person_id
-    WHERE movie_crew.job = 'Director' AND movie_crew.person_id = ?;
-  `;
-
-
-    // console.log('query = ', query)
-
-    // Ejecutar la consulta
-    db.all(query, [directorId], (err, movies) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error al cargar las películas del director.');
-        } else {
-            // console.log('movies.length = ', movies.length)
-            // Obtener el nombre del director
-            const directorName = movies.length > 0 ? movies[0].directorName : '';
-            res.render('director', { directorName, movies });
-        }
-    });
+    );
 }
 
 module.exports = {
     getSearch,
     getMovie,
-    getActor,
-    getDirector
+    getPerson,
 }
