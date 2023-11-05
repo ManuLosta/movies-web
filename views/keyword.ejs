@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%=  movies[0].keyword_name %></title>
+    <%- include('partials/header') %>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    <div class="container text-center">
+        <h1>Keyword: "<%= movies[0].keyword_name %>"</h1>
+        <h2>Películas</h2>
+            <% if (movies.length === 0) { %>
+                <p>No hay resultados.</p>
+            <% } else { %>
+                <ul class="list-unstyled d-flex flex-column align-items-center">
+                    <% movies.forEach((movie) => { %>
+                        <li class="my-1 p-1 px-3 card text-primary-emphasis border border-primary-subtle bg-primary-subtle rounded-3">
+                            <a class="text-center text-decoration-none" href="/pelicula/<%= movie.movie_id %>"><%= movie.title %> (<%= new Date(movie.release_date).getFullYear() %>)</a>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } %>
+    </div>
+</body>
+</html>

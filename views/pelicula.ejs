@@ -1,47 +1,94 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title><%= movie.title %></title>
+    <title><%= movie[0].title %></title>
     <%- include('partials/header') %>
 </head>
 <body>
 <%- include('partials/navbar') %>
-<h1><%= movie.title %></h1>
-<h3>Fecha: <%= movie.release_date %></h3>
-<h3>Dirigida por: </h3>
-<ul>
-    <% movie.directors.forEach((director) => { %>
-        <li>
-            <a href="/director/<%= director.crew_member_id %>"><%= director.crew_member_name %></a>
-        </li>
-    <% }); %>
-</ul>
-<h3>Escrita por: </h3>
-<ul>
-    <% movie.writers.forEach((writer) => { %>
-        <li>
-            <%= writer.crew_member_name %>
-        </li>
-    <% }); %>
-</ul>
-<h3>Argumento:</h3>
-<div id="overview"><p><%= movie.overview %></p></div>
-<h3>Elenco:</h3>
-<ul>
-    <% movie.cast.sort((a, b) => a.cast_order - b.cast_order).forEach((actor) => { %>
-        <li><a href="/actor/<%= actor.actor_id %>"><%= actor.actor_name %></a> - <%= actor.character_name %></li>
-    <% }); %>
-</ul>
-<h3>Crew:</h3>
-<ul>
-    <% movie.crew.forEach((crewMember) => { %>
-        <li>
-            <%= crewMember.crew_member_name %> - <%= crewMember.department_name %>
-            (<%= crewMember.job %>)
-        </li>
-    <% }); %>
-</ul>
-<p></p>
-<div id="inicio"><a href="/">Inicio</a></div>
+<div class="container text-center">
+    <h1><%= movie[0].title %></h1>
+    <p class="fst-italic"><%= movie[0].tagline %></p>
+    <h4>Fecha: <%= movie[0].release_date %></h4>
+
+    <h3 class="mt-4">Información</h3>
+    <div class="d-flex flex-wrap justify-content-center">
+        <p class="mx-2"><b>Rating:</b> <%= movie[0].vote_average %> ⭐</p>
+        <p class="mx-2"><b>Duración:</b> <%= movie[0].runtime %> min </p>
+        <p class="mx-2"><b>Presupuesto:</b> $<%= movie[0].budget %></p>
+        <p class="mx-2"><b>Ganancia:</b> $<%= movie[0].revenue %></p>
+        <p class="mx-2"><b>Empresa:</b> <%= movie[0].company_name %></p>
+    </div>
+
+    <h3 class="mt-4">Director</h3>
+    <ul class="list-unstyled d-flex flex-column align-items-center">
+        <% directors.forEach((director) => { %>
+            <li class="my-1 p-1 px-3 text-primary-emphasis border border-primary-subtle bg-primary-subtle rounded-3">
+                <a class="text-center text-decoration-none" href="/persona/<%= director.person_id %>"><%= director.person_name %></a>
+            </li>
+        <% }); %>
+    </ul>
+    
+    <h3 class="mt-4">Argumento</h3>
+    <div id="overview"><p><%= movie[0].overview %></p></div>
+
+    <h3 class="mt-4">Generos</h3>
+    <ul class="list-unstyled d-flex flex-wrap align-items-center justify-content-center">
+        <% genres.forEach((genre) => { %>
+            <li class="m-1 py-1 px-3 text-primary-emphasis border border-primary-subtle bg-primary-subtle rounded-3">
+               <%= genre.genre_name %>
+            </li>
+        <% }); %>
+    </ul>
+
+    <h3 class="mt-4">Keywords</h3>
+    <ul class="list-unstyled d-flex flex-wrap align-items-center justify-content-center">
+        <% keywords.forEach((keyword) => { %>
+            <li class="m-1 py-1 px-3 text-primary-emphasis border border-primary-subtle bg-primary-subtle rounded-3">
+                <a class="text-center text-decoration-none" href="/keyword/<%= keyword.keyword_id %>"><%= keyword.keyword_name %></a>
+            </li>
+        <% }); %>
+    </ul>
+
+    <h3>Elenco</h3>
+    <ul class="list-unstyled d-flex flex-column align-items-center">
+        <% cast.forEach((actor) => { %>
+            <li class="m-1 py-1 px-3 text-primary-emphasis border border-primary-subtle bg-primary-subtle rounded-3">
+                <a class="text-center text-decoration-none" href="/persona/<%= actor.person_id %>"><%= actor.person_name %></a> - <%= actor.character_name %>
+            </li>
+        <% }); %>
+    </ul>
+
+
+    <h3 class="mt-4">Crew</h3>
+    <% const departments = [
+    'Camera',
+    'Directing',
+    'Production',
+    'Writing',
+    'Editing',
+    'Sound',
+    'Art',
+    'Costume & Make-Up',
+    'Crew',
+    'Visual Effects',
+    'Lighting',
+    'Actors'
+    ]; %>
+
+    <% departments.forEach(department => {
+        const departmentCrew = crew.filter(member => member.department_name === department);
+        if (departmentCrew.length > 0) { %>
+            <h5><%= department %></h5>
+            <ul class="list-unstyled d-flex flex-column align-items-center">
+                <% departmentCrew.forEach((member) => { %>
+                    <li class="m-1 py-1 px-3 text-primary-emphasis border border-primary-subtle bg-primary-subtle rounded-3">
+                        <b><%= member.person_name %></b> - <%= member.job %>
+                    </li>
+                <% }); %>
+            </ul>
+        <% }
+    }); %>
+</div>
 </body>
 </html>
