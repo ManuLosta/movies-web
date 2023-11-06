@@ -87,26 +87,26 @@ const getMovie = (req, res) => {
     `;
 
     const castQuery = `
-        SELECT 
-            p.person_name,
-            p.person_id,
-            mc.character_name
-        FROM person AS p
-        JOIN movie_cast AS mc ON p.person_id = mc.person_id
-        WHERE mc.movie_id = ?
-        ORDER BY mc.cast_order
+    SELECT 
+        p.person_name,
+        p.person_id,
+        mc.character_name
+    FROM person AS p
+    JOIN movie_cast AS mc ON p.person_id = mc.person_id
+    WHERE mc.movie_id = ?
+    ORDER BY mc.cast_order
     `;
 
     const crewQuery = `
-        SELECT 
-            p.person_name, 
-            mc.job,
-            p.person_id,
-            d.department_name
-        FROM person AS p
-        JOIN movie_crew AS mc ON mc.person_id = p.person_id
-        JOIN department AS d ON d.department_id = mc.department_id
-        WHERE mc.movie_id = ?
+    SELECT 
+        p.person_name, 
+        mc.job,
+        p.person_id,
+        d.department_name
+    FROM person AS p
+    JOIN movie_crew AS mc ON mc.person_id = p.person_id
+    JOIN department AS d ON d.department_id = mc.department_id
+    WHERE mc.movie_id = ?
     `;
 
     db.all(movieQuery, movieId, (err, movie) => {
