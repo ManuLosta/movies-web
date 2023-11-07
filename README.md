@@ -2,7 +2,7 @@
 ## TP - MovieWeb
 
 ### Instalar dependencias
-`npm install express sqlite3 ejs`
+`npm install`
 
 ### Ejecutar
-`node app.js`
+`npm start`
